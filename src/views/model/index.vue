@@ -8,6 +8,7 @@ import FishSpeech from "@/views/model/fish-speech/index.vue";
 import EdgeTts from "@/views/model/edge-tts/index.vue";
 import ChatTts from "@/views/model/chat-tts/index.vue";
 import CosyVoice from "@/views/model/cosy-voice/index.vue";
+import ImageModelServer from "@/views/model/image-model-server/index.vue";
 
 const menuGroups = [
   {
@@ -27,6 +28,12 @@ const menuGroups = [
       'chat-tts',
       'cosy-voice'
     ]
+  },
+  {
+    name: '图像',
+    list: [
+      '图像大模型'
+    ]
   }
 ]
 
@@ -38,68 +45,84 @@ const changeModelType = (item: string) => {
 </script>
 
 <template>
-  <div style="display: flex; padding: 20px 10px 20px 20px">
-    <div style="width: 10%; height: calc(100vh - 42px)">
-      <n-scrollbar style="max-height: calc(100vh - 42px)">
-        <div style="padding-right: 10px">
-          <a-space style="width: 100%" direction="vertical">
-            <div
-                v-for="(item, index) in menuGroups"
-                :key="index"
-            >
-              <a-divider>{{ item.name }}</a-divider>
-              <a-space style="width: 100%" direction="vertical">
-                <a-card
-                    v-for="(item1, index1) in item.list"
-                    :key="index1"
-                    style="border: 1px #cccccc solid; border-radius: 8px"
-                    :style="activeModelType === item1 && { backgroundColor: '#C3F6F6' }"
-                    @click="changeModelType(item1)"
-                >
-                  <div style="padding: 10px 0; cursor: default">
-                    {{ item1 }}
-                  </div>
-                </a-card>
-              </a-space>
-            </div>
-          </a-space>
+  <div class="model-container">
+    <div class="model-menu">
+      <div v-for="(group, index) in menuGroups" :key="index" class="menu-group">
+        <div class="menu-group-title">{{ group.name }}</div>
+        <div class="menu-group-list">
+          <div
+              v-for="(item, itemIndex) in group.list"
+              :key="itemIndex"
+              class="menu-item"
+              :class="{ active: activeModelType === item }"
+              @click="changeModelType(item)"
+          >
+            {{ item }}
+          </div>
         </div>
-      </n-scrollbar>
+      </div>
     </div>
-    <a-divider direction="vertical" style="margin: 0 20px 0 10px"/>
-    <div style="width: 90%">
-      <a-scrollbar style="max-height: calc(100vh - 42px); overflow: auto">
-        <div style="padding-right: 10px">
-          <div v-if="activeModelType === '文本大模型'">
-            <text-model-server/>
-          </div>
-          <div v-if="activeModelType === '音频生成服务'">
-            <audio-model-server/>
-          </div>
-          <div v-if="activeModelType === '参考音频'">
-            <ref-audio/>
-          </div>
-          <div v-if="activeModelType === 'gpt-sovits'">
-            <gpt-sovits/>
-          </div>
-          <div v-if="activeModelType === 'fish-speech'">
-            <fish-speech/>
-          </div>
-          <div v-if="activeModelType === 'edge-tts'">
-            <edge-tts/>
-          </div>
-          <div v-if="activeModelType === 'chat-tts'">
-            <chat-tts/>
-          </div>
-          <div v-if="activeModelType === 'cosy-voice'">
-            <cosy-voice/>
-          </div>
-        </div>
-      </a-scrollbar>
+    <div class="model-content">
+      <text-model-server v-if="activeModelType === '文本大模型'"/>
+      <audio-model-server v-if="activeModelType === '音频生成服务'"/>
+      <ref-audio v-if="activeModelType === '参考音频'"/>
+      <gpt-sovits v-if="activeModelType === 'gpt-sovits'"/>
+      <fish-speech v-if="activeModelType === 'fish-speech'"/>
+      <edge-tts v-if="activeModelType === 'edge-tts'"/>
+      <chat-tts v-if="activeModelType === 'chat-tts'"/>
+      <cosy-voice v-if="activeModelType === 'cosy-voice'"/>
+      <image-model-server v-if="activeModelType === '图像大模型'"/>
     </div>
   </div>
 </template>
 
 <style scoped>
+.model-container {
+  display: flex;
+  height: 100%;
+}
 
+.model-menu {
+  width: 200px;
+  padding: 20px;
+  border-right: 1px solid #e5e5e5;
+  overflow-y: auto;
+}
+
+.menu-group {
+  margin-bottom: 20px;
+}
+
+.menu-group-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.menu-group-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.menu-item:hover {
+  background-color: #f5f5f5;
+}
+
+.menu-item.active {
+  background-color: #e6f4ff;
+  color: #1890ff;
+}
+
+.model-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
 </style>
